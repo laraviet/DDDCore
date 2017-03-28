@@ -1,5 +1,5 @@
 {
-    "name": "Laraviet/DDDCore",
+    "name": "Laraviet/ddd-core",
     "type": "library",
     "description": "Core package to migrate DDD into Laravel system",
     "keywords": [
