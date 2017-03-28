@@ -1,6 +1,6 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Persistence\Cache\Repository;
+namespace Laraviet\DDDCore\Book\Persistence\Cache;
 
 use Laraviet\DDDCore\Book\Domain\Entities\AbstractEntity;
 use Laraviet\DDDCore\Book\Domain\Repositories\RepositoryInterface;
