@@ -1,9 +1,9 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Persistence\Cache;
+namespace Laraviet\DDDCore\Persistence\Cache;
 
-use Laraviet\DDDCore\Book\Domain\Entities\AbstractEntity;
-use Laraviet\DDDCore\Book\Domain\Repositories\RepositoryInterface;
+use Laraviet\DDDCore\Domain\Entities\AbstractEntity;
+use Laraviet\DDDCore\Domain\Repositories\RepositoryInterface;
 
 
 abstract class BaseRepository implements RepositoryInterface
@@ -19,12 +19,12 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function commit()
     {
-        throw new \Exception('Method not implemented');
+        $this->repository->commit();
     }
 
     public function begin()
     {
-        throw new \Exception('Method not implemented');
+        $this->repository->begin();
     }
 
     public function getById($id)
@@ -52,6 +52,12 @@ abstract class BaseRepository implements RepositoryInterface
     public function persist(AbstractEntity $entity)
     {
         $this->repository->persist($entity);
+        $this->cache->tags($this->entity_name)->flush();
+    }
+
+    public function destroy($id)
+    {
+        $this->repository->destroy($id);
         $this->cache->tags($this->entity_name)->flush();
     }
 

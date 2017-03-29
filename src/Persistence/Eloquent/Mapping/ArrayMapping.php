@@ -1,6 +1,6 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Persistence\Eloquent\Mapping;
+namespace Laraviet\DDDCore\Persistence\Eloquent\Mapping;
 
 class ArrayMapping
 {

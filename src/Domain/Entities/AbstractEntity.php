@@ -1,6 +1,6 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Domain\Entities;
+namespace Laraviet\DDDCore\Domain\Entities;
 
 abstract class AbstractEntity
 {

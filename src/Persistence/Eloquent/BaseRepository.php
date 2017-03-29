@@ -1,11 +1,11 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Persistence\Eloquent;
+namespace Laraviet\DDDCore\Persistence\Eloquent;
 
-use Laraviet\DDDCore\Book\Domain\Entities\AbstractEntity;
-use Laraviet\DDDCore\Book\Domain\Repositories\RepositoryInterface;
-use Laraviet\DDDCore\Book\Persistence\Eloquent\Mapping\ItemMapping;
-use Laraviet\DDDCore\Book\Persistence\Eloquent\Mapping\ArrayMapping;
+use Laraviet\DDDCore\Domain\Entities\AbstractEntity;
+use Laraviet\DDDCore\Domain\Repositories\RepositoryInterface;
+use Laraviet\DDDCore\Persistence\Eloquent\Mapping\ItemMapping;
+use Laraviet\DDDCore\Persistence\Eloquent\Mapping\ArrayMapping;
 
 abstract class BaseRepository implements RepositoryInterface
 {
@@ -57,11 +57,23 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function persist(AbstractEntity $entity)
     {
-        $model = $this->model->findOrFail($entity->getId());
+        $is_create = $entity->getId() == 0;
+        if ($is_create) {
+            $model = $this->model;
+            $entity = $this->entity;
+        } else {
+            $model = $this->model->findOrFail($entity->getId());
+        }
+
         $mapping = new ItemMapping($entity, $model);
-        $model = $mapping->EntityToModel();
+        $model = $mapping->EntityToModel( $is_create ?: null );
         $model->save();
         return;
+    }
+
+    public function destroy($id)
+    {
+        return $this->model->destroy($id);
     }
 
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Persistence\Eloquent\Mapping;
+namespace Laraviet\DDDCore\Persistence\Eloquent\Mapping;
 
 use Illuminate\Database\Eloquent\Model;
-use Laraviet\DDDCore\Book\Domain\Entities\AbstractEntity;
+use Laraviet\DDDCore\Domain\Entities\AbstractEntity;
 
 class ItemMapping
 {
@@ -40,13 +40,15 @@ class ItemMapping
         return $this;
     }
 
-    public function EntityToModel()
+    public function EntityToModel($is_create = null)
     {
         $this->fromUI();
         foreach ($this->entity->getAllProperties() as $property) {
-            if (isset($this->model->$property)) {
+            if (isset($is_create) || isset($this->model->$property)) {
                 $method = "get" . ucfirst($property);
-                $this->model->$property = $this->entity->$method();
+                if (method_exists($this->entity, $method)){
+                    $this->model->$property = $this->entity->$method();
+                }
             }
         }
 

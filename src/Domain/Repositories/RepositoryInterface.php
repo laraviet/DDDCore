@@ -1,8 +1,8 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Domain\Repositories;
+namespace Laraviet\DDDCore\Domain\Repositories;
 
-use Laraviet\DDDCore\Book\Domain\Entities\AbstractEntity;
+use Laraviet\DDDCore\Domain\Entities\AbstractEntity;
 
 interface RepositoryInterface
 {
@@ -12,4 +12,5 @@ interface RepositoryInterface
     public function persist(AbstractEntity $entity);
     public function begin();
     public function commit();
+    public function destroy($id);
 }

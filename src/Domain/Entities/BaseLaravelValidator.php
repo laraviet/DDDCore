@@ -1,9 +1,9 @@
 <?php
 
-namespace Laraviet\DDDCore\Book\Domain\Entities;
+namespace Laraviet\DDDCore\Domain\Entities;
 
 use Illuminate\Validation\ValidationException;
-use Laraviet\DDDCore\Book\Domain\Entities\ValidatorInterface;
+use Laraviet\DDDCore\Domain\Entities\ValidatorInterface;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Http\Request;
