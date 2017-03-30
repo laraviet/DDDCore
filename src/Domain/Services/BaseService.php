@@ -7,7 +7,6 @@ use Laraviet\DDDCore\Domain\Entities\NullEntity;
 abstract class BaseService implements ServiceInterface
 {
     protected $repository;
-    protected $validator;
 
     public function getAll()
     {
@@ -19,15 +18,11 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->getById($id);
     }
 
-    public function persist($request, $id = null)
+    public function persist($id = null)
     {
-        $this->validator->validate($request);
-        if (isset($id)){
-            $entity = $this->getById($id);
-        } else {
-            $entity = new NullEntity;
-        }
-        return $this->repository->persist($entity);
+        $model = isset($id) ? $this->getById($id) : null;
+
+        return $this->repository->persist($model);
     }
 
     public function paginate($quantity = null)

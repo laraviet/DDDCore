@@ -24,7 +24,7 @@ class BaseController extends Controller
 
     public function store(Request $request)
     {
-        $this->service->persist($request);
+        $this->service->persist();
         return redirect()->route('books.index');
     }
 
@@ -42,7 +42,7 @@ class BaseController extends Controller
 
     public function update($id, Request $request)
     {
-        $this->service->persist($request, $id);
+        $this->service->persist($id);
         return redirect()->route('books.index');
     }
 

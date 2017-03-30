@@ -2,78 +2,64 @@
 
 namespace Laraviet\DDDCore\Persistence\Eloquent;
 
-use Laraviet\DDDCore\Domain\Entities\AbstractEntity;
 use Laraviet\DDDCore\Domain\Repositories\RepositoryInterface;
-use Laraviet\DDDCore\Persistence\Eloquent\Mapping\ItemMapping;
-use Laraviet\DDDCore\Persistence\Eloquent\Mapping\ArrayMapping;
+use Illuminate\Validation\ValidationException;
+
 
 abstract class BaseRepository implements RepositoryInterface
 {
     protected $model;
-    protected $entity;
-
-    public function commit()
-    {
-        throw new \Exception('Method not implemented');
-    }
 
     public function begin()
     {
         throw new \Exception('Method not implemented');
     }
 
-    public function getById($id)
+    public function commit()
     {
-        $model = $this->model->findOrFail($id);
-        $mapping = new ItemMapping($this->entity, $model);
-        return $mapping->ModelToEntity();
+        throw new \Exception('Method not implemented');
     }
 
     public function getAll()
     {
-        $books = $this->model->all();
-        return $this->mapCollectionToArrayOfEntity($books);
+        return $this->model->all();
+    }
+
+    public function getById($id)
+    {
+        return $this->model->find($id);
     }
 
     public function paginate($quantity = null)
     {
         $per_page = isset($quantity) ? $quantity : 10;
-        $books = $this->model->paginate($per_page);
-        $collection = $this->mapCollectionToArrayOfEntity($books->getCollection());
-        $books->setCollection($collection);
-        return $books;
+        return $this->model->paginate($per_page);
     }
 
-    private function mapCollectionToArrayOfEntity($collection) {
-        $mapping = new ArrayMapping($this->getEntityName(), $collection);
-        return $mapping->CollectionToArray();
-    }
-
-    public function getEntityName()
+    public function persist($model)
     {
-        $reflector = new \ReflectionClass($this->entity);
-        return $reflector->getName();
-    }
-
-    public function persist(AbstractEntity $entity)
-    {
-        $is_create = $entity->getId() == 0;
-        if ($is_create) {
-            $model = $this->model;
-            $entity = $this->entity;
+        if ($model != null) {
+            $success = $model->updateUniques();
         } else {
-            $model = $this->model->findOrFail($entity->getId());
+            $model = $this->model;
+            $success = $model->save();
         }
 
-        $mapping = new ItemMapping($entity, $model);
-        $model = $mapping->EntityToModel( $is_create ?: null );
-        $model->save();
-        return;
+        if (!$success) {
+            throw new ValidationException($model);
+        }
+        return $model;
     }
 
     public function destroy($id)
     {
         return $this->model->destroy($id);
+    }
+
+    public function identity()
+    {
+        $reflector = new \ReflectionClass($this->model);
+        return $reflector->getName();
     }
 
 }

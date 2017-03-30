@@ -10,16 +10,11 @@ abstract class BaseRepository implements RepositoryInterface
 {
     protected $repository;
     protected $cache;
-    protected $entity_name;
+    protected $identity;
 
     public function __construct()
     {
-        $this->entity_name = $this->repository->getEntityName();
-    }
-
-    public function commit()
-    {
-        $this->repository->commit();
+        $this->identity = $this->repository->identity();
     }
 
     public function begin()
@@ -27,38 +22,52 @@ abstract class BaseRepository implements RepositoryInterface
         $this->repository->begin();
     }
 
-    public function getById($id)
+    public function commit()
     {
-        return $this->cache->tags($this->entity_name)->rememberForever($this->entity_name . '.' . $id, function() use ($id) {
-            return $this->repository->getById($id);
-        });
+        $this->repository->commit();
     }
 
     public function getAll()
     {
-        return $this->cache->tags($this->entity_name)->rememberForever($this->entity_name . '.all', function(){
+        $query_string = $this->queryString();
+        return $this->cache->tags($this->identity)->rememberForever($this->identity . '.all.' . $query_string, function(){
             return $this->repository->getAll();
+        });
+    }
+
+    public function getById($id)
+    {
+        return $this->cache->tags($this->identity)->rememberForever($this->identity . '.detail.' . $id, function() use ($id) {
+            return $this->repository->getById($id);
         });
     }
 
     public function paginate($quantity = null)
     {
-        $per_page = isset($quantity) ? $quantity : 10;
-        return $this->cache->tags($this->entity_name)->rememberForever($this->entity_name . '.paginate.' . $per_page, function() use ($per_page) {
-            return $this->repository->paginate($per_page);
+        $query_string = $this->queryString();
+        return $this->cache->tags($this->identity)->rememberForever($this->identity . '.paginate.' . $query_string, function() use ($quantity) {
+            return $this->repository->paginate($quantity);
         });
     }
 
-    public function persist(AbstractEntity $entity)
+    public function persist($model)
     {
-        $this->repository->persist($entity);
-        $this->cache->tags($this->entity_name)->flush();
+        $this->repository->persist($model);
+        $this->cache->tags($this->identity)->flush();
     }
 
     public function destroy($id)
     {
         $this->repository->destroy($id);
-        $this->cache->tags($this->entity_name)->flush();
+        $this->cache->tags($this->identity)->flush();
+    }
+
+    /**
+     * Get query string helper function
+     */
+    private function queryString()
+    {
+        return $_SERVER['QUERY_STRING'] ?: "no_query_string";
     }
 
 }
