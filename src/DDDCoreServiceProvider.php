@@ -2,8 +2,11 @@
 
 namespace Laraviet\DDDCore;
 
+use Collective\Html\FormFacade;
+use Collective\Html\HtmlFacade;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Collective\Html\HtmlServiceProvider;
 
 class DDDCoreServiceProvider extends ServiceProvider
 {
@@ -24,9 +27,9 @@ class DDDCoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(Collective\Html\HtmlServiceProvider::class);
+        $this->app->register(HtmlServiceProvider::class);
 
-        AliasLoader::getInstance()->alias("Html", Collective\Html\HtmlFacade::class);
-        AliasLoader::getInstance()->alias("Form", Collective\Html\FormFacade::class);
+        AliasLoader::getInstance()->alias("Html", HtmlFacade::class);
+        AliasLoader::getInstance()->alias("Form", FormFacade::class);
     }
 }
